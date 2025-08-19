@@ -3,366 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>명상 타이머</title>
+    <title>🍅 뽀모도로 타이머</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
         
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 25%, #ff6b6b 50%, #ff4757 75%, #ff3742 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
         }
         
-        .timer-container {
-            text-align: center;
-            padding: 3rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 90%;
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
-        .timer-title {
-            color: white;
+        .tomato-float {
+            position: absolute;
             font-size: 2rem;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        .timer-circle {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 2rem;
-        }
-        
-        .circle-bg {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            position: absolute;
-        }
-        
-        .circle-progress {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: absolute;
-            background: conic-gradient(from 0deg, #ff6b6b 0%, #4ecdc4 25%, #45b7d1 50%, #96ceb4 75%, #ffeaa7 100%);
-            mask: radial-gradient(circle, transparent 120px, black 125px);
-            -webkit-mask: radial-gradient(circle, transparent 120px, black 125px);
-            transform: rotate(-90deg);
-            transition: all 0.3s ease;
-        }
-        
-        .timer-display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 3.5rem;
-            font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.05); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-        
-        .controls {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-        
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            background: rgba(255, 255, 255, 0.2);
-            min-width: 120px;
-        }
-        
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #5a6fd8, #6a4190);
-        }
-        
-        .time-presets {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .preset-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        
-        .preset-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .preset-btn.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .completion-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 2rem 3rem;
-            border-radius: 20px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            display: none;
-            animation: fadeInScale 0.5s ease;
-        }
-        
-        @keyframes fadeInScale {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-        
-        .floating-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: float 6s infinite linear;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
         }
         
         @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+        
+        .timer-glow {
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.4), 
+                        0 0 100px rgba(255, 107, 107, 0.3),
+                        inset 0 0 60px rgba(255, 255, 255, 0.1);
+        }
+        
+        .pulse-ring {
+            animation: pulseRing 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+        }
+        
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .progress-circle {
+            stroke-dasharray: 628;
+            stroke-dashoffset: 628;
+            transition: stroke-dashoffset 1s ease;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 2s linear infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
-<body>
-    <div class="floating-particles" id="particles"></div>
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden">
     
-    <div class="timer-container">
-        <h1 class="timer-title">명상 타이머</h1>
-        
-        <div class="timer-circle">
-            <div class="circle-bg"></div>
-            <div class="circle-progress" id="progress"></div>
-            <div class="timer-display pulse" id="display">15:00</div>
-        </div>
-        
-        <div class="controls">
-            <button class="btn" id="startBtn">시작</button>
-            <button class="btn" id="pauseBtn">일시정지</button>
-            <button class="btn" id="resetBtn">리셋</button>
-        </div>
-        
-        <div class="time-presets">
-            <div class="preset-btn" data-minutes="5">5분</div>
-            <div class="preset-btn active" data-minutes="15">15분</div>
-            <div class="preset-btn" data-minutes="20">20분</div>
-            <div class="preset-btn" data-minutes="30">30분</div>
-        </div>
-    </div>
+    <!-- 떠다니는 토마토들 -->
+    <div class="tomato-float" style="top: 10%; left: 15%; animation-delay: 0s;">🍅</div>
+    <div class="tomato-float" style="top: 20%; right: 20%; animation-delay: 1s;">🍅</div>
+    <div class="tomato-float" style="bottom: 30%; left: 10%; animation-delay: 2s;">🍅</div>
+    <div class="tomato-float" style="bottom: 15%; right: 15%; animation-delay: 3s;">🍅</div>
+    <div class="tomato-float" style="top: 60%; left: 5%; animation-delay: 4s;">🍅</div>
+    <div class="tomato-float" style="top: 40%; right: 8%; animation-delay: 5s;">🍅</div>
     
-    <div class="completion-message" id="completionMessage">
-        🧘‍♀️ 명상이 완료되었습니다! 🧘‍♂️
+    <!-- 반짝이는 효과들 -->
+    <div id="sparkles"></div>
+    
+    <div class="text-center text-white relative z-10">
+        <!-- 제목 -->
+        <div class="bounce-in">
+            <h1 class="text-6xl font-bold mb-4 text-white drop-shadow-lg">🍅</h1>
+            <h2 class="text-4xl font-light mb-12 tracking-wider opacity-95">뽀모도로 타이머</h2>
+        </div>
+        
+        <!-- 타이머 원형 -->
+        <div class="relative mb-12">
+            <!-- 펄스 링 효과 -->
+            <div id="pulseRing" class="absolute inset-0 w-80 h-80 mx-auto rounded-full border-4 border-white opacity-0"></div>
+            
+            <div class="relative w-80 h-80 mx-auto timer-glow rounded-full bg-white bg-opacity-10 backdrop-blur-lg border-2 border-white border-opacity-30 flex items-center justify-center">
+                <!-- 진행률 원 -->
+                <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
+                    <circle id="progressCircle" cx="100" cy="100" r="90" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" class="progress-circle"/>
+                </svg>
+                
+                <!-- 시간 표시 -->
+                <div class="text-center z-10">
+                    <div id="timeDisplay" class="text-6xl font-bold mb-2 text-white drop-shadow-lg">25:00</div>
+                    <div id="statusText" class="text-lg font-medium opacity-90">집중할 준비 완료!</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 컨트롤 버튼들 -->
+        <div class="flex justify-center gap-6 mb-8">
+            <button id="startBtn" onclick="startTimer()" class="bg-white bg-opacity-90 text-red-500 px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg">
+                ▶️ 시작
+            </button>
+            <button id="pauseBtn" onclick="pauseTimer()" class="bg-white bg-opacity-20 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border-2 border-white border-opacity-50 hidden">
+                ⏸️ 일시정지
+            </button>
+            <button onclick="resetTimer()" class="bg-white bg-opacity-20 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border-2 border-white border-opacity-50">
+                🔄 리셋
+            </button>
+        </div>
+        
+        <!-- 시간 설정 버튼들 -->
+        <div class="flex justify-center gap-4">
+            <button onclick="setTime(15)" class="bg-white bg-opacity-15 text-white px-6 py-3 rounded-full font-medium hover:bg-opacity-25 transition-all duration-300 border border-white border-opacity-40">
+                15분
+            </button>
+            <button onclick="setTime(25)" class="bg-white bg-opacity-25 text-white px-6 py-3 rounded-full font-medium hover:bg-opacity-35 transition-all duration-300 border-2 border-white border-opacity-60">
+                25분
+            </button>
+            <button onclick="setTime(45)" class="bg-white bg-opacity-15 text-white px-6 py-3 rounded-full font-medium hover:bg-opacity-25 transition-all duration-300 border border-white border-opacity-40">
+                45분
+            </button>
+        </div>
     </div>
 
     <script>
-        class MeditationTimer {
-            constructor() {
-                this.totalTime = 15 * 60; // 15분을 초로 변환
-                this.currentTime = this.totalTime;
-                this.isRunning = false;
-                this.interval = null;
-                
-                this.display = document.getElementById('display');
-                this.progress = document.getElementById('progress');
-                this.startBtn = document.getElementById('startBtn');
-                this.pauseBtn = document.getElementById('pauseBtn');
-                this.resetBtn = document.getElementById('resetBtn');
-                this.completionMessage = document.getElementById('completionMessage');
-                
-                this.initEventListeners();
-                this.createParticles();
-                this.updateDisplay();
-            }
-            
-            initEventListeners() {
-                this.startBtn.addEventListener('click', () => this.start());
-                this.pauseBtn.addEventListener('click', () => this.pause());
-                this.resetBtn.addEventListener('click', () => this.reset());
-                
-                // 프리셋 버튼들
-                document.querySelectorAll('.preset-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        const minutes = parseInt(e.target.dataset.minutes);
-                        this.setTime(minutes);
-                    });
-                });
-            }
-            
-            start() {
-                if (!this.isRunning) {
-                    this.isRunning = true;
-                    this.startBtn.textContent = '실행중...';
-                    this.startBtn.disabled = true;
-                    
-                    this.interval = setInterval(() => {
-                        this.currentTime--;
-                        this.updateDisplay();
-                        this.updateProgress();
-                        
-                        if (this.currentTime <= 0) {
-                            this.complete();
-                        }
-                    }, 1000);
-                }
-            }
-            
-            pause() {
-                if (this.isRunning) {
-                    this.isRunning = false;
-                    clearInterval(this.interval);
-                    this.startBtn.textContent = '시작';
-                    this.startBtn.disabled = false;
-                }
-            }
-            
-            reset() {
-                this.pause();
-                this.currentTime = this.totalTime;
-                this.updateDisplay();
-                this.updateProgress();
-                this.completionMessage.style.display = 'none';
-            }
-            
-            setTime(minutes) {
-                if (!this.isRunning) {
-                    this.totalTime = minutes * 60;
-                    this.currentTime = this.totalTime;
-                    this.updateDisplay();
-                    this.updateProgress();
-                }
-            }
-            
-            updateDisplay() {
-                const minutes = Math.floor(this.currentTime / 60);
-                const seconds = this.currentTime % 60;
-                this.display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-            
-            updateProgress() {
-                const percentage = ((this.totalTime - this.currentTime) / this.totalTime) * 360;
-                this.progress.style.background = `conic-gradient(from 0deg, 
-                    rgba(255, 255, 255, 0.3) 0deg, 
-                    rgba(255, 255, 255, 0.3) ${percentage}deg, 
-                    transparent ${percentage}deg, 
-                    transparent 360deg)`;
-            }
-            
-            complete() {
-                this.pause();
-                this.completionMessage.style.display = 'block';
-                
-                // 완료 메시지 자동 숨김
-                setTimeout(() => {
-                    this.completionMessage.style.display = 'none';
-                }, 5000);
-                
-                // 화면 전체에 맥동 효과
-                document.body.style.animation = 'pulse 1s ease-in-out 3';
-            }
-            
-            createParticles() {
-                const particlesContainer = document.getElementById('particles');
-                
-                for (let i = 0; i < 20; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.animationDelay = Math.random() * 6 + 's';
-                    particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
-                    particlesContainer.appendChild(particle);
-                }
+        let timeLeft = 25 * 60; // 기본 25분
+        let totalTime = 25 * 60;
+        let timerInterval = null;
+        let isRunning = false;
+        
+        // 반짝이 효과 생성
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            for (let i = 0; i < 15; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                sparklesContainer.appendChild(sparkle);
             }
         }
         
-        // 타이머 초기화
-        document.addEventListener('DOMContentLoaded', () => {
-            new MeditationTimer();
-        });
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timeDisplay').textContent = display;
+            
+            // 진행률 업데이트 (628은 원의 둘레)
+            const progress = ((totalTime - timeLeft) / totalTime) * 628;
+            document.getElementById('progressCircle').style.strokeDashoffset = 628 - progress;
+        }
+        
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('pauseBtn').classList.remove('hidden');
+                document.getElementById('pulseRing').classList.add('pulse-ring');
+                document.getElementById('statusText').textContent = '집중 시간! 🍅';
+                
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        completeTimer();
+                    }
+                }, 1000);
+            }
+        }
+        
+        function pauseTimer() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(timerInterval);
+                document.getElementById('startBtn').classList.remove('hidden');
+                document.getElementById('pauseBtn').classList.add('hidden');
+                document.getElementById('pulseRing').classList.remove('pulse-ring');
+                document.getElementById('statusText').textContent = '잠시 휴식 중...';
+            }
+        }
+        
+        function resetTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            timeLeft = totalTime;
+            updateDisplay();
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('pulseRing').classList.remove('pulse-ring');
+            document.getElementById('statusText').textContent = '집중할 준비 완료!';
+            document.getElementById('progressCircle').style.strokeDashoffset = 628;
+        }
+        
+        function setTime(minutes) {
+            if (!isRunning) {
+                totalTime = minutes * 60;
+                timeLeft = totalTime;
+                updateDisplay();
+                document.getElementById('statusText').textContent = `${minutes}분 집중 준비!`;
+                document.getElementById('progressCircle').style.strokeDashoffset = 628;
+            }
+        }
+        
+        function completeTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('pulseRing').classList.remove('pulse-ring');
+            document.getElementById('statusText').textContent = '뽀모도로 완료! 🍅✨ 수고했어요!';
+            
+            // 완료 효과
+            document.querySelector('.timer-glow').style.animation = 'completePulse 1s ease-in-out 3';
+        }
+        
+        // 완료 애니메이션 추가
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes completePulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 초기화
+        createSparkles();
+        updateDisplay();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9716c1f5424bea9a',t:'MTc1NTU3NjE3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9718826161a4d1d6',t:'MTc1NTU5NDUzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
