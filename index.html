@@ -45,7 +45,7 @@
         
         @keyframes pulseRing {
             0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.3); opacity: 0; }
+            100% { transform: scale(1.1); opacity: 0; }
         }
         
         .bounce-in {
@@ -59,9 +59,9 @@
             100% { transform: scale(1); opacity: 1; }
         }
         
-        .progress-circle {
-            stroke-dasharray: 628;
-            stroke-dashoffset: 628;
+        .progress-rect {
+            stroke-dasharray: 1160;
+            stroke-dashoffset: 1160;
             transition: stroke-dashoffset 1s ease;
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
         }
@@ -94,56 +94,47 @@
     <!-- 반짝이는 효과들 -->
     <div id="sparkles"></div>
     
-    <div class="text-center text-white relative z-10">
-        <!-- 제목 -->
-        <div class="bounce-in">
-            <h1 class="text-6xl font-bold mb-4 text-white drop-shadow-lg">🍅</h1>
-            <h2 class="text-4xl font-light mb-12 tracking-wider opacity-95">뽀모도로 타이머</h2>
+    <!-- 320x320 정사각형 컨테이너 -->
+    <div class="w-80 h-80 bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl border-2 border-white border-opacity-30 timer-glow flex flex-col items-center justify-center text-white relative overflow-hidden bounce-in">
+        
+        <!-- 펄스 링 효과 -->
+        <div id="pulseRing" class="absolute inset-0 rounded-3xl border-4 border-white opacity-0"></div>
+        
+        <!-- 진행률 테두리 -->
+        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
+            <rect x="10" y="10" width="300" height="300" rx="20" ry="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
+            <rect id="progressRect" x="10" y="10" width="300" height="300" rx="20" ry="20" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" class="progress-rect"/>
+        </svg>
+        
+        <!-- 제목과 토마토 성장 단계 -->
+        <div class="text-center mb-4">
+            <div id="tomatoStage" class="text-3xl mb-1">🌱</div>
+            <div class="text-sm font-medium opacity-90">뽀모도로</div>
+            <div id="sessionCounter" class="text-xs opacity-70">세션: 0/4</div>
         </div>
         
-        <!-- 타이머 원형 -->
-        <div class="relative mb-12">
-            <!-- 펄스 링 효과 -->
-            <div id="pulseRing" class="absolute inset-0 w-80 h-80 mx-auto rounded-full border-4 border-white opacity-0"></div>
-            
-            <div class="relative w-80 h-80 mx-auto timer-glow rounded-full bg-white bg-opacity-10 backdrop-blur-lg border-2 border-white border-opacity-30 flex items-center justify-center">
-                <!-- 진행률 원 -->
-                <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
-                    <circle id="progressCircle" cx="100" cy="100" r="90" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" class="progress-circle"/>
-                </svg>
-                
-                <!-- 시간 표시 -->
-                <div class="text-center z-10">
-                    <div id="timeDisplay" class="text-6xl font-bold mb-2 text-white drop-shadow-lg">25:00</div>
-                    <div id="statusText" class="text-lg font-medium opacity-90">집중할 준비 완료!</div>
-                </div>
-            </div>
+        <!-- 시간 표시 -->
+        <div class="text-center mb-4">
+            <div id="timeDisplay" class="text-5xl font-bold mb-1 text-white drop-shadow-lg">25:00</div>
+            <div id="statusText" class="text-xs opacity-80">집중할 준비 완료!</div>
         </div>
         
         <!-- 컨트롤 버튼들 -->
-        <div class="flex justify-center gap-6 mb-8">
-            <button id="startBtn" onclick="startTimer()" class="bg-white bg-opacity-90 text-red-500 px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg">
+        <div class="flex gap-2 mb-3 relative z-20">
+            <button id="startBtn" class="bg-white bg-opacity-90 text-red-500 px-3 py-2 rounded-xl font-bold text-xs hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer">
                 ▶️ 시작
             </button>
-            <button id="pauseBtn" onclick="pauseTimer()" class="bg-white bg-opacity-20 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border-2 border-white border-opacity-50 hidden">
-                ⏸️ 일시정지
+            <button id="pauseWorkBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 hidden cursor-pointer">
+                ⏸️ 정지
             </button>
-            <button onclick="resetTimer()" class="bg-white bg-opacity-20 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border-2 border-white border-opacity-50">
+            <button id="breakBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 cursor-pointer">
+                🚿 5분 휴식
+            </button>
+            <button id="pauseBreakBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 hidden cursor-pointer">
+                💧 정지
+            </button>
+            <button id="resetBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 cursor-pointer">
                 🔄 리셋
-            </button>
-        </div>
-        
-        <!-- 시간 설정 버튼들 -->
-        <div class="flex justify-center gap-4">
-            <button onclick="setTime(15)" class="bg-white bg-opacity-15 text-white px-6 py-3 rounded-full font-medium hover:bg-opacity-25 transition-all duration-300 border border-white border-opacity-40">
-                15분
-            </button>
-            <button onclick="setTime(25)" class="bg-white bg-opacity-25 text-white px-6 py-3 rounded-full font-medium hover:bg-opacity-35 transition-all duration-300 border-2 border-white border-opacity-60">
-                25분
-            </button>
-            <button onclick="setTime(45)" class="bg-white bg-opacity-15 text-white px-6 py-3 rounded-full font-medium hover:bg-opacity-25 transition-all duration-300 border border-white border-opacity-40">
-                45분
             </button>
         </div>
     </div>
@@ -153,6 +144,12 @@
         let totalTime = 25 * 60;
         let timerInterval = null;
         let isRunning = false;
+        let isBreakMode = false;
+        let completedSessions = 0; // 완료된 세션 수
+        
+        // 토마토 성장 단계
+        const tomatoStages = ['🌱', '🌸', '🟢', '🍅'];
+        const stageNames = ['새싹', '꽃', '초록토마토', '빨간토마토'];
         
         // 반짝이 효과 생성
         function createSparkles() {
@@ -167,79 +164,158 @@
             }
         }
         
+        // 토마토 성장 단계 업데이트
+        function updateTomatoStage() {
+            const stageIndex = Math.min(completedSessions, 3);
+            document.getElementById('tomatoStage').textContent = tomatoStages[stageIndex];
+            document.getElementById('sessionCounter').textContent = `세션: ${completedSessions}/4`;
+            
+            if (completedSessions === 4) {
+                document.getElementById('sessionCounter').textContent = '완전히 익은 토마토! 🎉';
+            }
+        }
+        
         function updateDisplay() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('timeDisplay').textContent = display;
             
-            // 진행률 업데이트 (628은 원의 둘레)
-            const progress = ((totalTime - timeLeft) / totalTime) * 628;
-            document.getElementById('progressCircle').style.strokeDashoffset = 628 - progress;
+            // 진행률 업데이트 (1160은 사각형의 둘레)
+            const progress = ((totalTime - timeLeft) / totalTime) * 1160;
+            document.getElementById('progressRect').style.strokeDashoffset = 1160 - progress;
         }
         
         function startTimer() {
             if (!isRunning) {
                 isRunning = true;
+                isBreakMode = false;
+                
+                // 기존 인터벌 정리
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                
                 document.getElementById('startBtn').classList.add('hidden');
-                document.getElementById('pauseBtn').classList.remove('hidden');
+                document.getElementById('pauseWorkBtn').classList.remove('hidden');
                 document.getElementById('pulseRing').classList.add('pulse-ring');
                 document.getElementById('statusText').textContent = '집중 시간! 🍅';
                 
                 timerInterval = setInterval(() => {
-                    timeLeft--;
-                    updateDisplay();
-                    
-                    if (timeLeft <= 0) {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
                         completeTimer();
                     }
                 }, 1000);
             }
         }
         
-        function pauseTimer() {
-            if (isRunning) {
+        function pauseWorkTimer() {
+            if (isRunning && !isBreakMode) {
                 isRunning = false;
                 clearInterval(timerInterval);
                 document.getElementById('startBtn').classList.remove('hidden');
-                document.getElementById('pauseBtn').classList.add('hidden');
+                document.getElementById('pauseWorkBtn').classList.add('hidden');
                 document.getElementById('pulseRing').classList.remove('pulse-ring');
-                document.getElementById('statusText').textContent = '잠시 휴식 중...';
+                document.getElementById('statusText').textContent = '일시정지...';
             }
         }
+        
+        function startBreak() {
+            if (!isRunning) {
+                isBreakMode = true;
+                totalTime = 5 * 60; // 5분 휴식
+                timeLeft = totalTime;
+                updateDisplay();
+                document.getElementById('statusText').textContent = '5분 휴식 준비!';
+                document.getElementById('progressRect').style.strokeDashoffset = 1160;
+                
+                // 자동으로 휴식 시작
+                isRunning = true;
+                document.getElementById('breakBtn').classList.add('hidden');
+                document.getElementById('pauseBreakBtn').classList.remove('hidden');
+                document.getElementById('pulseRing').classList.add('pulse-ring');
+                document.getElementById('statusText').textContent = '토마토가 자라고 있어요 🚿';
+                
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        completeBreak();
+                    }
+                }, 1000);
+            }
+        }
+        
+        function pauseBreakTimer() {
+            if (isRunning && isBreakMode) {
+                isRunning = false;
+                clearInterval(timerInterval);
+                document.getElementById('breakBtn').classList.remove('hidden');
+                document.getElementById('pauseBreakBtn').classList.add('hidden');
+                document.getElementById('pulseRing').classList.remove('pulse-ring');
+                document.getElementById('statusText').textContent = '물뿌리개에 물을 채우고 있어요 💧';
+            }
+        }
+        
+
         
         function resetTimer() {
             isRunning = false;
+            isBreakMode = false;
             clearInterval(timerInterval);
+            totalTime = 25 * 60;
             timeLeft = totalTime;
+            completedSessions = 0; // 세션 카운터 리셋
             updateDisplay();
+            updateTomatoStage(); // 토마토 단계 리셋
             document.getElementById('startBtn').classList.remove('hidden');
-            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('pauseWorkBtn').classList.add('hidden');
+            document.getElementById('breakBtn').classList.remove('hidden');
+            document.getElementById('pauseBreakBtn').classList.add('hidden');
             document.getElementById('pulseRing').classList.remove('pulse-ring');
-            document.getElementById('statusText').textContent = '집중할 준비 완료!';
-            document.getElementById('progressCircle').style.strokeDashoffset = 628;
-        }
-        
-        function setTime(minutes) {
-            if (!isRunning) {
-                totalTime = minutes * 60;
-                timeLeft = totalTime;
-                updateDisplay();
-                document.getElementById('statusText').textContent = `${minutes}분 집중 준비!`;
-                document.getElementById('progressCircle').style.strokeDashoffset = 628;
-            }
+            document.getElementById('statusText').textContent = '새로운 토마토를 키워보세요!';
+            document.getElementById('progressRect').style.strokeDashoffset = 1160;
         }
         
         function completeTimer() {
             isRunning = false;
             clearInterval(timerInterval);
             document.getElementById('startBtn').classList.remove('hidden');
-            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('pauseWorkBtn').classList.add('hidden');
             document.getElementById('pulseRing').classList.remove('pulse-ring');
-            document.getElementById('statusText').textContent = '뽀모도로 완료! 🍅✨ 수고했어요!';
+            
+            // 세션 완료 카운트 증가
+            completedSessions++;
+            updateTomatoStage();
+            
+            if (completedSessions === 4) {
+                document.getElementById('statusText').textContent = '토마토가 완전히 익었어요! 🍅✨';
+            } else {
+                document.getElementById('statusText').textContent = `뽀모도로 완료! ${stageNames[Math.min(completedSessions, 3)]}로 성장했어요!`;
+            }
             
             // 완료 효과
             document.querySelector('.timer-glow').style.animation = 'completePulse 1s ease-in-out 3';
+        }
+        
+        function completeBreak() {
+            isRunning = false;
+            isBreakMode = false;
+            clearInterval(timerInterval);
+            document.getElementById('breakBtn').classList.remove('hidden');
+            document.getElementById('pauseBreakBtn').classList.add('hidden');
+            document.getElementById('pulseRing').classList.remove('pulse-ring');
+            document.getElementById('statusText').textContent = '휴식 완료! 다시 집중해요 🍅';
+            
+            // 25분으로 리셋
+            totalTime = 25 * 60;
+            timeLeft = totalTime;
+            updateDisplay();
+            document.getElementById('progressRect').style.strokeDashoffset = 1160;
         }
         
         // 완료 애니메이션 추가
@@ -252,10 +328,17 @@
         `;
         document.head.appendChild(style);
         
+        // 이벤트 리스너 추가
+        document.getElementById('startBtn').addEventListener('click', startTimer);
+        document.getElementById('pauseWorkBtn').addEventListener('click', pauseWorkTimer);
+        document.getElementById('breakBtn').addEventListener('click', startBreak);
+        document.getElementById('pauseBreakBtn').addEventListener('click', pauseBreakTimer);
+        document.getElementById('resetBtn').addEventListener('click', resetTimer);
+        
         // 초기화
         createSparkles();
         updateDisplay();
+        updateTomatoStage();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9718826161a4d1d6',t:'MTc1NTU5NDUzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9722109cc156eaa3',t:'MTc1NTY5NDczNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
