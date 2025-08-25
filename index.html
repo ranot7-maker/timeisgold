@@ -3,342 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍅 뽀모도로 타이머</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>메인 페이지</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
-        
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 25%, #ff6b6b 50%, #ff4757 75%, #ff3742 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 8s ease infinite;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
         }
-        
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        h1 {
+            color: #333;
         }
-        
-        .tomato-float {
-            position: absolute;
-            font-size: 2rem;
-            animation: float 6s ease-in-out infinite;
-            opacity: 0.3;
+        .link-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none; /* 밑줄 제거 */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(120deg); }
-            66% { transform: translateY(10px) rotate(240deg); }
-        }
-        
-        .timer-glow {
-            box-shadow: 0 0 60px rgba(255, 255, 255, 0.4), 
-                        0 0 100px rgba(255, 107, 107, 0.3),
-                        inset 0 0 60px rgba(255, 255, 255, 0.1);
-        }
-        
-        .pulse-ring {
-            animation: pulseRing 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
-        }
-        
-        @keyframes pulseRing {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.1); opacity: 0; }
-        }
-        
-        .bounce-in {
-            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .progress-rect {
-            stroke-dasharray: 1160;
-            stroke-dashoffset: 1160;
-            transition: stroke-dashoffset 1s ease;
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
-        }
-        
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-            animation: sparkle 2s linear infinite;
-        }
-        
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
+        .link-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative overflow-hidden">
-    
-    <!-- 떠다니는 토마토들 -->
-    <div class="tomato-float" style="top: 10%; left: 15%; animation-delay: 0s;">🍅</div>
-    <div class="tomato-float" style="top: 20%; right: 20%; animation-delay: 1s;">🍅</div>
-    <div class="tomato-float" style="bottom: 30%; left: 10%; animation-delay: 2s;">🍅</div>
-    <div class="tomato-float" style="bottom: 15%; right: 15%; animation-delay: 3s;">🍅</div>
-    <div class="tomato-float" style="top: 60%; left: 5%; animation-delay: 4s;">🍅</div>
-    <div class="tomato-float" style="top: 40%; right: 8%; animation-delay: 5s;">🍅</div>
-    
-    <!-- 반짝이는 효과들 -->
-    <div id="sparkles"></div>
-    
-    <!-- 320x320 정사각형 컨테이너 -->
-    <div class="w-80 h-80 bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl border-2 border-white border-opacity-30 timer-glow flex flex-col items-center justify-center text-white relative overflow-hidden bounce-in">
-        
-        <!-- 펄스 링 효과 -->
-        <div id="pulseRing" class="absolute inset-0 rounded-3xl border-4 border-white opacity-0"></div>
-        
-        <!-- 진행률 테두리 -->
-        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
-            <rect x="10" y="10" width="300" height="300" rx="20" ry="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
-            <rect id="progressRect" x="10" y="10" width="300" height="300" rx="20" ry="20" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" class="progress-rect"/>
-        </svg>
-        
-        <!-- 제목과 토마토 성장 단계 -->
-        <div class="text-center mb-4">
-            <div id="tomatoStage" class="text-3xl mb-1">🌱</div>
-            <div class="text-sm font-medium opacity-90">뽀모도로</div>
-            <div id="sessionCounter" class="text-xs opacity-70">세션: 0/4</div>
-        </div>
-        
-        <!-- 시간 표시 -->
-        <div class="text-center mb-4">
-            <div id="timeDisplay" class="text-5xl font-bold mb-1 text-white drop-shadow-lg">25:00</div>
-            <div id="statusText" class="text-xs opacity-80">집중할 준비 완료!</div>
-        </div>
-        
-        <!-- 컨트롤 버튼들 -->
-        <div class="flex gap-2 mb-3 relative z-20">
-            <button id="startBtn" class="bg-white bg-opacity-90 text-red-500 px-3 py-2 rounded-xl font-bold text-xs hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer">
-                ▶️ 시작
-            </button>
-            <button id="pauseWorkBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 hidden cursor-pointer">
-                ⏸️ 정지
-            </button>
-            <button id="breakBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 cursor-pointer">
-                🚿 5분 휴식
-            </button>
-            <button id="pauseBreakBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 hidden cursor-pointer">
-                💧 정지
-            </button>
-            <button id="resetBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 cursor-pointer">
-                🔄 리셋
-            </button>
-        </div>
-    </div>
-
-    <script>
-        let timeLeft = 25 * 60; // 기본 25분
-        let totalTime = 25 * 60;
-        let timerInterval = null;
-        let isRunning = false;
-        let isBreakMode = false;
-        let completedSessions = 0; // 완료된 세션 수
-        
-        // 토마토 성장 단계
-        const tomatoStages = ['🌱', '🌸', '🟢', '🍅'];
-        const stageNames = ['새싹', '꽃', '초록토마토', '빨간토마토'];
-        
-        // 반짝이 효과 생성
-        function createSparkles() {
-            const sparklesContainer = document.getElementById('sparkles');
-            for (let i = 0; i < 15; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                sparkle.style.left = Math.random() * 100 + '%';
-                sparkle.style.top = Math.random() * 100 + '%';
-                sparkle.style.animationDelay = Math.random() * 2 + 's';
-                sparklesContainer.appendChild(sparkle);
-            }
-        }
-        
-        // 토마토 성장 단계 업데이트
-        function updateTomatoStage() {
-            const stageIndex = Math.min(completedSessions, 3);
-            document.getElementById('tomatoStage').textContent = tomatoStages[stageIndex];
-            document.getElementById('sessionCounter').textContent = `세션: ${completedSessions}/4`;
-            
-            if (completedSessions === 4) {
-                document.getElementById('sessionCounter').textContent = '완전히 익은 토마토! 🎉';
-            }
-        }
-        
-        function updateDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timeDisplay').textContent = display;
-            
-            // 진행률 업데이트 (1160은 사각형의 둘레)
-            const progress = ((totalTime - timeLeft) / totalTime) * 1160;
-            document.getElementById('progressRect').style.strokeDashoffset = 1160 - progress;
-        }
-        
-        function startTimer() {
-            if (!isRunning) {
-                isRunning = true;
-                isBreakMode = false;
-                
-                // 기존 인터벌 정리
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                }
-                
-                document.getElementById('startBtn').classList.add('hidden');
-                document.getElementById('pauseWorkBtn').classList.remove('hidden');
-                document.getElementById('pulseRing').classList.add('pulse-ring');
-                document.getElementById('statusText').textContent = '집중 시간! 🍅';
-                
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateDisplay();
-                    } else {
-                        completeTimer();
-                    }
-                }, 1000);
-            }
-        }
-        
-        function pauseWorkTimer() {
-            if (isRunning && !isBreakMode) {
-                isRunning = false;
-                clearInterval(timerInterval);
-                document.getElementById('startBtn').classList.remove('hidden');
-                document.getElementById('pauseWorkBtn').classList.add('hidden');
-                document.getElementById('pulseRing').classList.remove('pulse-ring');
-                document.getElementById('statusText').textContent = '일시정지...';
-            }
-        }
-        
-        function startBreak() {
-            if (!isRunning) {
-                isBreakMode = true;
-                totalTime = 5 * 60; // 5분 휴식
-                timeLeft = totalTime;
-                updateDisplay();
-                document.getElementById('statusText').textContent = '5분 휴식 준비!';
-                document.getElementById('progressRect').style.strokeDashoffset = 1160;
-                
-                // 자동으로 휴식 시작
-                isRunning = true;
-                document.getElementById('breakBtn').classList.add('hidden');
-                document.getElementById('pauseBreakBtn').classList.remove('hidden');
-                document.getElementById('pulseRing').classList.add('pulse-ring');
-                document.getElementById('statusText').textContent = '토마토가 자라고 있어요 🚿';
-                
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateDisplay();
-                    } else {
-                        completeBreak();
-                    }
-                }, 1000);
-            }
-        }
-        
-        function pauseBreakTimer() {
-            if (isRunning && isBreakMode) {
-                isRunning = false;
-                clearInterval(timerInterval);
-                document.getElementById('breakBtn').classList.remove('hidden');
-                document.getElementById('pauseBreakBtn').classList.add('hidden');
-                document.getElementById('pulseRing').classList.remove('pulse-ring');
-                document.getElementById('statusText').textContent = '물뿌리개에 물을 채우고 있어요 💧';
-            }
-        }
-        
-
-        
-        function resetTimer() {
-            isRunning = false;
-            isBreakMode = false;
-            clearInterval(timerInterval);
-            totalTime = 25 * 60;
-            timeLeft = totalTime;
-            completedSessions = 0; // 세션 카운터 리셋
-            updateDisplay();
-            updateTomatoStage(); // 토마토 단계 리셋
-            document.getElementById('startBtn').classList.remove('hidden');
-            document.getElementById('pauseWorkBtn').classList.add('hidden');
-            document.getElementById('breakBtn').classList.remove('hidden');
-            document.getElementById('pauseBreakBtn').classList.add('hidden');
-            document.getElementById('pulseRing').classList.remove('pulse-ring');
-            document.getElementById('statusText').textContent = '새로운 토마토를 키워보세요!';
-            document.getElementById('progressRect').style.strokeDashoffset = 1160;
-        }
-        
-        function completeTimer() {
-            isRunning = false;
-            clearInterval(timerInterval);
-            document.getElementById('startBtn').classList.remove('hidden');
-            document.getElementById('pauseWorkBtn').classList.add('hidden');
-            document.getElementById('pulseRing').classList.remove('pulse-ring');
-            
-            // 세션 완료 카운트 증가
-            completedSessions++;
-            updateTomatoStage();
-            
-            if (completedSessions === 4) {
-                document.getElementById('statusText').textContent = '토마토가 완전히 익었어요! 🍅✨';
-            } else {
-                document.getElementById('statusText').textContent = `뽀모도로 완료! ${stageNames[Math.min(completedSessions, 3)]}로 성장했어요!`;
-            }
-            
-            // 완료 효과
-            document.querySelector('.timer-glow').style.animation = 'completePulse 1s ease-in-out 3';
-        }
-        
-        function completeBreak() {
-            isRunning = false;
-            isBreakMode = false;
-            clearInterval(timerInterval);
-            document.getElementById('breakBtn').classList.remove('hidden');
-            document.getElementById('pauseBreakBtn').classList.add('hidden');
-            document.getElementById('pulseRing').classList.remove('pulse-ring');
-            document.getElementById('statusText').textContent = '휴식 완료! 다시 집중해요 🍅';
-            
-            // 25분으로 리셋
-            totalTime = 25 * 60;
-            timeLeft = totalTime;
-            updateDisplay();
-            document.getElementById('progressRect').style.strokeDashoffset = 1160;
-        }
-        
-        // 완료 애니메이션 추가
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes completePulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // 이벤트 리스너 추가
-        document.getElementById('startBtn').addEventListener('click', startTimer);
-        document.getElementById('pauseWorkBtn').addEventListener('click', pauseWorkTimer);
-        document.getElementById('breakBtn').addEventListener('click', startBreak);
-        document.getElementById('pauseBreakBtn').addEventListener('click', pauseBreakTimer);
-        document.getElementById('resetBtn').addEventListener('click', resetTimer);
-        
-        // 초기화
-        createSparkles();
-        updateDisplay();
-        updateTomatoStage();
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9722109cc156eaa3',t:'MTc1NTY5NDczNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<body>
+    <h1>메인 페이지입니다</h1>
+    <a href="page1.html" class="link-button">Page 1로 이동</a>
+    <a href="page2.html" class="link-button">Page 2로 이동</a>
+</body>
 </html>
