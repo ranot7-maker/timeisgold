@@ -3,42 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>메인 페이지</title>
+    <title>모험의 지도</title>
     <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap');
+        
+        * {
             margin: 0;
-            background-color: #f0f0f0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        h1 {
-            color: #333;
+        
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(45deg, #f4e4bc, #e8d5a3, #f0e6c7);
+            background-size: 400% 400%;
+            animation: parchmentGlow 8s ease-in-out infinite;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
         }
-        .link-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            color: white;
-            background-color: #007bff;
+        
+        @keyframes parchmentGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .map-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://raw.githubusercontent.com/yourusername/yourrepo/main/image/main.png');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: multiply;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 24px;
+            padding: 80px 100px;
+            height: 100vh;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .grid-button {
+            background: linear-gradient(145deg, #f5f0e8, #e8dcc6);
             border: none;
-            border-radius: 5px;
-            text-decoration: none; /* 밑줄 제거 */
+            border-radius: 16px;
+            padding: 24px 32px;
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #5d4e37;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 
+                0 8px 32px rgba(139, 69, 19, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 -1px 0 rgba(139, 69, 19, 0.1);
+            border: 1px solid rgba(139, 69, 19, 0.15);
+            min-height: 70px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
         }
-        .link-button:hover {
-            background-color: #0056b3;
+        
+        .grid-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .grid-button:hover::before {
+            left: 100%;
+        }
+        
+        .grid-button:hover {
+            background: linear-gradient(145deg, #daa520, #b8860b);
+            color: #2c1810;
+            box-shadow: 
+                0 12px 40px rgba(218, 165, 32, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 -1px 0 rgba(139, 69, 19, 0.2);
+            border-color: rgba(184, 134, 11, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .grid-button:active {
+            transform: translateY(0px);
+            box-shadow: 
+                0 4px 16px rgba(218, 165, 32, 0.2),
+                inset 0 2px 4px rgba(139, 69, 19, 0.2);
+        }
+        
+        .wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(65, 105, 225, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(65, 105, 225, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(65, 105, 225, 0.05) 0%, transparent 50%);
+            animation: waveMotion 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes waveMotion {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            33% { transform: translateX(10px) translateY(-5px); }
+            66% { transform: translateX(-5px) translateY(10px); }
+        }
+        
+
+        
+        @media (max-width: 1200px) {
+            .button-grid {
+                padding: 60px 80px;
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .button-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(7, 1fr);
+                padding: 40px 20px;
+                gap: 16px;
+            }
+            
+            .grid-button {
+                padding: 20px 24px;
+                font-size: 14px;
+                min-height: 60px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .button-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(10, 1fr);
+                padding: 30px 15px;
+                gap: 12px;
+            }
+            
+            .grid-button {
+                padding: 16px 20px;
+                font-size: 13px;
+                min-height: 55px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>메인 페이지입니다</h1>
-    <a href="page1.html" class="link-button">Page 1로 이동</a>
-    <a href="page2.html" class="link-button">Page 2로 이동</a>
-</body>
+    <div class="map-container">
+        <div class="wave"></div>
+        
+
+        
+        <div class="button-grid">
+            <button class="grid-button" onclick="navigateTo('button1')">버튼 1</button>
+            <button class="grid-button" onclick="navigateTo('button2')">버튼 2</button>
+            <button class="grid-button" onclick="navigateTo('button3')">버튼 3</button>
+            <button class="grid-button" onclick="navigateTo('button4')">버튼 4</button>
+            <button class="grid-button" onclick="navigateTo('button5')">버튼 5</button>
+            
+            <button class="grid-button" onclick="navigateTo('button6')">버튼 6</button>
+            <button class="grid-button" onclick="navigateTo('button7')">버튼 7</button>
+            <button class="grid-button" onclick="navigateTo('button8')">버튼 8</button>
+            <button class="grid-button" onclick="navigateTo('button9')">버튼 9</button>
+            <button class="grid-button" onclick="navigateTo('button10')">버튼 10</button>
+            
+            <button class="grid-button" onclick="navigateTo('button11')">버튼 11</button>
+            <button class="grid-button" onclick="navigateTo('button12')">버튼 12</button>
+            <button class="grid-button" onclick="navigateTo('button13')">버튼 13</button>
+            <button class="grid-button" onclick="navigateTo('button14')">버튼 14</button>
+            <button class="grid-button" onclick="navigateTo('button15')">버튼 15</button>
+            
+            <button class="grid-button" onclick="navigateTo('button16')">버튼 16</button>
+            <button class="grid-button" onclick="navigateTo('button17')">버튼 17</button>
+            <button class="grid-button" onclick="navigateTo('button18')">버튼 18</button>
+            <button class="grid-button" onclick="navigateTo('button19')">버튼 19</button>
+            <button class="grid-button" onclick="navigateTo('button20')">버튼 20</button>
+        </div>
+    </div>
+
+    <script>
+        function navigateTo(section) {
+            // 섬 클릭 시 실행될 함수
+            console.log(`${section} 섹션으로 이동합니다!`);
+            
+            // 클릭 효과 추가
+            event.target.style.transform = 'scale(1.3) rotate(5deg)';
+            setTimeout(() => {
+                event.target.style.transform = '';
+            }, 200);
+            
+            // 실제 페이지 이동이나 섹션 표시 로직을 여기에 추가하세요
+            alert(`${section} 페이지로 모험을 떠납니다! 🗺️`);
+        }
+        
+        // 페이지 로드 시 버튼들이 순차적으로 나타나는 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.grid-button');
+            buttons.forEach((button, index) => {
+                button.style.opacity = '0';
+                button.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    button.style.transition = 'all 0.5s ease-out';
+                    button.style.opacity = '1';
+                    button.style.transform = 'translateY(0)';
+                }, index * 100 + 200);
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974c0b2576e75871',t:'MTc1NjEzNDkxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
