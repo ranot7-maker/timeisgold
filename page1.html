@@ -3,342 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍅 뽀모도로 타이머</title>
+    <title>네잎클로버 카운터</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 25%, #ff6b6b 50%, #ff4757 75%, #ff3742 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 8s ease infinite;
+            font-family: 'Noto Sans KR', sans-serif;
         }
         
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        .clover-leaf {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
         }
         
-        .tomato-float {
-            position: absolute;
-            font-size: 2rem;
-            animation: float 6s ease-in-out infinite;
-            opacity: 0.3;
+        .clover-leaf.filled {
+            animation: leafFill 0.8s ease-out;
         }
         
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(120deg); }
-            66% { transform: translateY(10px) rotate(240deg); }
+        @keyframes leafFill {
+            0% { 
+                transform: scale(1);
+            }
+            50% { 
+                transform: scale(1.1);
+            }
+            100% { 
+                transform: scale(1);
+            }
         }
         
-        .timer-glow {
-            box-shadow: 0 0 60px rgba(255, 255, 255, 0.4), 
-                        0 0 100px rgba(255, 107, 107, 0.3),
-                        inset 0 0 60px rgba(255, 255, 255, 0.1);
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
         }
         
-        .pulse-ring {
-            animation: pulseRing 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
-        }
-        
-        @keyframes pulseRing {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.1); opacity: 0; }
-        }
-        
-        .bounce-in {
-            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .progress-rect {
-            stroke-dasharray: 1160;
-            stroke-dashoffset: 1160;
-            transition: stroke-dashoffset 1s ease;
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
-        }
-        
-        .sparkle {
+        .firework {
             position: absolute;
             width: 4px;
             height: 4px;
-            background: white;
             border-radius: 50%;
-            animation: sparkle 2s linear infinite;
+            animation: firework 2s ease-out forwards;
         }
         
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
+        @keyframes firework {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            animation: confetti 3s ease-out forwards;
+        }
+        
+        @keyframes confetti {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        .pulse-button {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 1s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative overflow-hidden">
+<body class="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 flex items-center justify-center p-4">
     
-    <!-- 떠다니는 토마토들 -->
-    <div class="tomato-float" style="top: 10%; left: 15%; animation-delay: 0s;">🍅</div>
-    <div class="tomato-float" style="top: 20%; right: 20%; animation-delay: 1s;">🍅</div>
-    <div class="tomato-float" style="bottom: 30%; left: 10%; animation-delay: 2s;">🍅</div>
-    <div class="tomato-float" style="bottom: 15%; right: 15%; animation-delay: 3s;">🍅</div>
-    <div class="tomato-float" style="top: 60%; left: 5%; animation-delay: 4s;">🍅</div>
-    <div class="tomato-float" style="top: 40%; right: 8%; animation-delay: 5s;">🍅</div>
+    <!-- 축하 애니메이션 컨테이너 -->
+    <div id="celebration" class="celebration hidden"></div>
     
-    <!-- 반짝이는 효과들 -->
-    <div id="sparkles"></div>
-    
-    <!-- 320x320 정사각형 컨테이너 -->
-    <div class="w-80 h-80 bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl border-2 border-white border-opacity-30 timer-glow flex flex-col items-center justify-center text-white relative overflow-hidden bounce-in">
+    <!-- 메인 카드 -->
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center relative overflow-hidden">
         
-        <!-- 펄스 링 효과 -->
-        <div id="pulseRing" class="absolute inset-0 rounded-3xl border-4 border-white opacity-0"></div>
+        <!-- 배경 장식 -->
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400"></div>
         
-        <!-- 진행률 테두리 -->
-        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
-            <rect x="10" y="10" width="300" height="300" rx="20" ry="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
-            <rect id="progressRect" x="10" y="10" width="300" height="300" rx="20" ry="20" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" class="progress-rect"/>
-        </svg>
-        
-        <!-- 제목과 토마토 성장 단계 -->
-        <div class="text-center mb-4">
-            <div id="tomatoStage" class="text-3xl mb-1">🌱</div>
-            <div class="text-sm font-medium opacity-90">뽀모도로</div>
-            <div id="sessionCounter" class="text-xs opacity-70">세션: 0/4</div>
+        <!-- 진행 상태 -->
+        <div id="progressSection" class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">목표 달성하기</h1>
+            <p class="text-gray-600 text-sm mb-4">네잎클로버를 완성해보세요! 🍀</p>
+            
+            <!-- 진행률 표시 -->
+            <div class="flex justify-center items-center gap-2 mb-6">
+                <div class="flex gap-1">
+                    <div id="dot1" class="w-3 h-3 rounded-full bg-gray-200 transition-all duration-300"></div>
+                    <div id="dot2" class="w-3 h-3 rounded-full bg-gray-200 transition-all duration-300"></div>
+                    <div id="dot3" class="w-3 h-3 rounded-full bg-gray-200 transition-all duration-300"></div>
+                    <div id="dot4" class="w-3 h-3 rounded-full bg-gray-200 transition-all duration-300"></div>
+                </div>
+                <span id="progressText" class="text-sm font-medium text-gray-600 ml-2">0/4</span>
+            </div>
         </div>
         
-        <!-- 시간 표시 -->
-        <div class="text-center mb-4">
-            <div id="timeDisplay" class="text-5xl font-bold mb-1 text-white drop-shadow-lg">25:00</div>
-            <div id="statusText" class="text-xs opacity-80">집중할 준비 완료!</div>
+        <!-- 네잎클로버 SVG -->
+        <div class="mb-8 flex justify-center">
+            <svg width="180" height="180" viewBox="0 0 180 180" class="drop-shadow-lg">
+                <defs>
+                    <!-- 그라데이션 정의 -->
+                    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <g transform="rotate(30, 90, 90)">
+                    <!-- 하트 1 (위쪽) - 0도 -->
+                    <path id="leaf1" class="clover-leaf" d="M90 53 C84 32, 64 32, 64 53 C64 74, 90 85, 90 85 C90 85, 116 74, 116 53 C116 32, 96 32, 90 53 Z" fill="#e5e7eb" stroke="#22c55e" stroke-width="2"/>
+                    <line id="line1" x1="90" y1="53" x2="90" y2="85" stroke="white" stroke-width="1.5" opacity="0"/>
+                    
+                    <!-- 하트 2 (오른쪽) - 90도 회전 -->
+                    <path id="leaf2" class="clover-leaf" d="M127 90 C148 84, 148 64, 127 64 C106 64, 95 90, 95 90 C95 90, 106 116, 127 116 C148 116, 148 96, 127 90 Z" fill="#e5e7eb" stroke="#22c55e" stroke-width="2"/>
+                    <line id="line2" x1="127" y1="90" x2="95" y2="90" stroke="white" stroke-width="1.5" opacity="0"/>
+                    
+                    <!-- 하트 3 (아래쪽) - 180도 회전 -->
+                    <path id="leaf3" class="clover-leaf" d="M90 127 C96 148, 116 148, 116 127 C116 106, 90 95, 90 95 C90 95, 64 106, 64 127 C64 148, 84 148, 90 127 Z" fill="#e5e7eb" stroke="#22c55e" stroke-width="2"/>
+                    <line id="line3" x1="90" y1="127" x2="90" y2="95" stroke="white" stroke-width="1.5" opacity="0"/>
+                    
+                    <!-- 하트 4 (왼쪽) - 270도 회전 -->
+                    <path id="leaf4" class="clover-leaf" d="M53 90 C32 96, 32 116, 53 116 C74 116, 85 90, 85 90 C85 90, 74 64, 53 64 C32 64, 32 84, 53 90 Z" fill="#e5e7eb" stroke="#22c55e" stroke-width="2"/>
+                    <line id="line4" x1="53" y1="90" x2="85" y2="90" stroke="white" stroke-width="1.5" opacity="0"/>
+                </g>
+            </svg>
         </div>
         
-        <!-- 컨트롤 버튼들 -->
-        <div class="flex gap-2 mb-3 relative z-20">
-            <button id="startBtn" class="bg-white bg-opacity-90 text-red-500 px-3 py-2 rounded-xl font-bold text-xs hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer">
-                ▶️ 시작
-            </button>
-            <button id="pauseWorkBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 hidden cursor-pointer">
-                ⏸️ 정지
-            </button>
-            <button id="breakBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 cursor-pointer">
-                🚿 5분 휴식
-            </button>
-            <button id="pauseBreakBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 hidden cursor-pointer">
-                💧 정지
-            </button>
-            <button id="resetBtn" class="bg-white bg-opacity-20 text-white px-3 py-2 rounded-xl font-bold text-xs hover:bg-opacity-30 hover:scale-105 transition-all duration-300 shadow-lg border border-white border-opacity-50 cursor-pointer">
-                🔄 리셋
-            </button>
+        <!-- 완료 버튼 -->
+        <button id="completeBtn" class="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg pulse-button">
+            완료하기 ✨
+        </button>
+        
+        <!-- 완료 화면 (숨김) -->
+        <div id="completionScreen" class="hidden mb-8">
+            <div class="bounce-in">
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">목표 달성 완료!</h1>
+                <p class="text-gray-600 text-sm mb-4">네잎클로버를 완성했어요! 🍀</p>
+                
+                <!-- 타임스탬프 -->
+                <div class="bg-green-50 rounded-xl p-3 mb-6">
+                    <p id="timestamp" class="font-medium text-green-700 text-sm"></p>
+                </div>
+            </div>
         </div>
+        
+        <!-- 다시 시작 버튼 -->
+        <button id="resetBtn" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md text-sm hidden">
+            다시 시작하기
+        </button>
     </div>
 
     <script>
-        let timeLeft = 25 * 60; // 기본 25분
-        let totalTime = 25 * 60;
-        let timerInterval = null;
-        let isRunning = false;
-        let isBreakMode = false;
-        let completedSessions = 0; // 완료된 세션 수
+        let count = 0;
+        const maxCount = 4;
+        const completeBtn = document.getElementById('completeBtn');
+        const progressSection = document.getElementById('progressSection');
+        const completionScreen = document.getElementById('completionScreen');
+        const celebration = document.getElementById('celebration');
+        const progressText = document.getElementById('progressText');
+        const resetBtn = document.getElementById('resetBtn');
         
-        // 토마토 성장 단계
-        const tomatoStages = ['🌱', '🌸', '🟢', '🍅'];
-        const stageNames = ['새싹', '꽃', '초록토마토', '빨간토마토'];
-        
-        // 반짝이 효과 생성
-        function createSparkles() {
-            const sparklesContainer = document.getElementById('sparkles');
-            for (let i = 0; i < 15; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                sparkle.style.left = Math.random() * 100 + '%';
-                sparkle.style.top = Math.random() * 100 + '%';
-                sparkle.style.animationDelay = Math.random() * 2 + 's';
-                sparklesContainer.appendChild(sparkle);
-            }
-        }
-        
-        // 토마토 성장 단계 업데이트
-        function updateTomatoStage() {
-            const stageIndex = Math.min(completedSessions, 3);
-            document.getElementById('tomatoStage').textContent = tomatoStages[stageIndex];
-            document.getElementById('sessionCounter').textContent = `세션: ${completedSessions}/4`;
-            
-            if (completedSessions === 4) {
-                document.getElementById('sessionCounter').textContent = '완전히 익은 토마토! 🎉';
-            }
-        }
-        
-        function updateDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timeDisplay').textContent = display;
-            
-            // 진행률 업데이트 (1160은 사각형의 둘레)
-            const progress = ((totalTime - timeLeft) / totalTime) * 1160;
-            document.getElementById('progressRect').style.strokeDashoffset = 1160 - progress;
-        }
-        
-        function startTimer() {
-            if (!isRunning) {
-                isRunning = true;
-                isBreakMode = false;
-                
-                // 기존 인터벌 정리
-                if (timerInterval) {
-                    clearInterval(timerInterval);
+        // 진행률 점 업데이트
+        function updateProgressDots() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                if (i <= count) {
+                    dot.classList.remove('bg-gray-200');
+                    dot.classList.add('bg-green-500');
+                } else {
+                    dot.classList.remove('bg-green-500');
+                    dot.classList.add('bg-gray-200');
                 }
-                
-                document.getElementById('startBtn').classList.add('hidden');
-                document.getElementById('pauseWorkBtn').classList.remove('hidden');
-                document.getElementById('pulseRing').classList.add('pulse-ring');
-                document.getElementById('statusText').textContent = '집중 시간! 🍅';
-                
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateDisplay();
-                    } else {
-                        completeTimer();
-                    }
-                }, 1000);
             }
+            progressText.textContent = `${count}/4`;
         }
         
-        function pauseWorkTimer() {
-            if (isRunning && !isBreakMode) {
-                isRunning = false;
-                clearInterval(timerInterval);
-                document.getElementById('startBtn').classList.remove('hidden');
-                document.getElementById('pauseWorkBtn').classList.add('hidden');
-                document.getElementById('pulseRing').classList.remove('pulse-ring');
-                document.getElementById('statusText').textContent = '일시정지...';
-            }
+        // 잎 채우기
+        function fillLeaf(leafNumber) {
+            const leaf = document.getElementById(`leaf${leafNumber}`);
+            const line = document.getElementById(`line${leafNumber}`);
+            leaf.classList.add('filled');
+            leaf.setAttribute('fill', 'url(#leafGradient)');
+            line.setAttribute('opacity', '1');
         }
         
-        function startBreak() {
-            if (!isRunning) {
-                isBreakMode = true;
-                totalTime = 5 * 60; // 5분 휴식
-                timeLeft = totalTime;
-                updateDisplay();
-                document.getElementById('statusText').textContent = '5분 휴식 준비!';
-                document.getElementById('progressRect').style.strokeDashoffset = 1160;
-                
-                // 자동으로 휴식 시작
-                isRunning = true;
-                document.getElementById('breakBtn').classList.add('hidden');
-                document.getElementById('pauseBreakBtn').classList.remove('hidden');
-                document.getElementById('pulseRing').classList.add('pulse-ring');
-                document.getElementById('statusText').textContent = '토마토가 자라고 있어요 🚿';
-                
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateDisplay();
-                    } else {
-                        completeBreak();
-                    }
-                }, 1000);
-            }
-        }
-        
-        function pauseBreakTimer() {
-            if (isRunning && isBreakMode) {
-                isRunning = false;
-                clearInterval(timerInterval);
-                document.getElementById('breakBtn').classList.remove('hidden');
-                document.getElementById('pauseBreakBtn').classList.add('hidden');
-                document.getElementById('pulseRing').classList.remove('pulse-ring');
-                document.getElementById('statusText').textContent = '물뿌리개에 물을 채우고 있어요 💧';
-            }
-        }
-        
-
-        
-        function resetTimer() {
-            isRunning = false;
-            isBreakMode = false;
-            clearInterval(timerInterval);
-            totalTime = 25 * 60;
-            timeLeft = totalTime;
-            completedSessions = 0; // 세션 카운터 리셋
-            updateDisplay();
-            updateTomatoStage(); // 토마토 단계 리셋
-            document.getElementById('startBtn').classList.remove('hidden');
-            document.getElementById('pauseWorkBtn').classList.add('hidden');
-            document.getElementById('breakBtn').classList.remove('hidden');
-            document.getElementById('pauseBreakBtn').classList.add('hidden');
-            document.getElementById('pulseRing').classList.remove('pulse-ring');
-            document.getElementById('statusText').textContent = '새로운 토마토를 키워보세요!';
-            document.getElementById('progressRect').style.strokeDashoffset = 1160;
-        }
-        
-        function completeTimer() {
-            isRunning = false;
-            clearInterval(timerInterval);
-            document.getElementById('startBtn').classList.remove('hidden');
-            document.getElementById('pauseWorkBtn').classList.add('hidden');
-            document.getElementById('pulseRing').classList.remove('pulse-ring');
+        // 축하 애니메이션
+        function createCelebration() {
+            celebration.classList.remove('hidden');
             
-            // 세션 완료 카운트 증가
-            completedSessions++;
-            updateTomatoStage();
-            
-            if (completedSessions === 4) {
-                document.getElementById('statusText').textContent = '토마토가 완전히 익었어요! 🍅✨';
-            } else {
-                document.getElementById('statusText').textContent = `뽀모도로 완료! ${stageNames[Math.min(completedSessions, 3)]}로 성장했어요!`;
+            // 폭죽 효과
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = Math.random() * 100 + '%';
+                    firework.style.top = '100%';
+                    firework.style.backgroundColor = ['#22c55e', '#10b981', '#059669', '#fbbf24', '#f59e0b'][Math.floor(Math.random() * 5)];
+                    celebration.appendChild(firework);
+                    
+                    setTimeout(() => firework.remove(), 2000);
+                }, i * 100);
             }
             
-            // 완료 효과
-            document.querySelector('.timer-glow').style.animation = 'completePulse 1s ease-in-out 3';
-        }
-        
-        function completeBreak() {
-            isRunning = false;
-            isBreakMode = false;
-            clearInterval(timerInterval);
-            document.getElementById('breakBtn').classList.remove('hidden');
-            document.getElementById('pauseBreakBtn').classList.add('hidden');
-            document.getElementById('pulseRing').classList.remove('pulse-ring');
-            document.getElementById('statusText').textContent = '휴식 완료! 다시 집중해요 🍅';
-            
-            // 25분으로 리셋
-            totalTime = 25 * 60;
-            timeLeft = totalTime;
-            updateDisplay();
-            document.getElementById('progressRect').style.strokeDashoffset = 1160;
-        }
-        
-        // 완료 애니메이션 추가
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes completePulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
+            // 색종이 효과
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = ['#22c55e', '#10b981', '#fbbf24', '#f59e0b', '#ef4444'][Math.floor(Math.random() * 5)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    celebration.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
             }
-        `;
-        document.head.appendChild(style);
+            
+            setTimeout(() => {
+                celebration.classList.add('hidden');
+            }, 4000);
+        }
         
-        // 이벤트 리스너 추가
-        document.getElementById('startBtn').addEventListener('click', startTimer);
-        document.getElementById('pauseWorkBtn').addEventListener('click', pauseWorkTimer);
-        document.getElementById('breakBtn').addEventListener('click', startBreak);
-        document.getElementById('pauseBreakBtn').addEventListener('click', pauseBreakTimer);
-        document.getElementById('resetBtn').addEventListener('click', resetTimer);
+        // 타임스탬프 생성
+        function generateTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+        }
         
-        // 초기화
-        createSparkles();
-        updateDisplay();
-        updateTomatoStage();
+        // 완료 버튼 클릭 이벤트
+        completeBtn.addEventListener('click', () => {
+            if (count < maxCount) {
+                count++;
+                fillLeaf(count);
+                updateProgressDots();
+                
+                if (count === maxCount) {
+                    setTimeout(() => {
+                        createCelebration();
+                        progressSection.classList.add('hidden');
+                        completionScreen.classList.remove('hidden');
+                        document.getElementById('resetBtn').classList.remove('hidden');
+                        completeBtn.classList.add('hidden');
+                        document.getElementById('timestamp').textContent = generateTimestamp();
+                    }, 800);
+                }
+            }
+        });
+        
+        // 리셋 버튼 클릭 이벤트
+        resetBtn.addEventListener('click', () => {
+            count = 0;
+            updateProgressDots();
+            
+            // 모든 잎 초기화
+            for (let i = 1; i <= 4; i++) {
+                const leaf = document.getElementById(`leaf${i}`);
+                const line = document.getElementById(`line${i}`);
+                leaf.classList.remove('filled');
+                leaf.setAttribute('fill', '#e5e7eb');
+                line.setAttribute('opacity', '0');
+            }
+            
+            completionScreen.classList.add('hidden');
+            resetBtn.classList.add('hidden');
+            progressSection.classList.remove('hidden');
+            completeBtn.classList.remove('hidden');
+        });
+        
+        // 초기 상태 설정
+        updateProgressDots();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9722109cc156eaa3',t:'MTc1NTY5NDczNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974c0a6bc0be5871',t:'MTc1NjEzNDg4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
